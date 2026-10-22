@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "loathe.capslock",
+  "name": "Caps Lock Indicator",
+  "version": "1.0.0",
+  "author": "loathe",
+  "description": "Shows a minimalist dot in the bar when Caps Lock is enabled",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "BarWidget.qml"
+  },
+  "barWidget": {
+    "displayName": "Caps Lock",
+    "description": "Indicates when Caps Lock is active",
+    "category": "System",
+    "allowMultiple": false,
+    "defaultSection": "center"
+  }
+}

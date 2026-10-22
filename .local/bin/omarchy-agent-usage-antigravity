@@ -1,0 +1,172 @@
+#!/usr/bin/env python3
+import datetime
+import glob
+import json
+import os
+import re
+import sys
+import tempfile
+
+HOME = os.environ.get("HOME", os.path.expanduser("~"))
+BRAIN_DIR = os.path.join(HOME, ".gemini", "antigravity-cli", "brain")
+STATE_HOME = os.environ.get("XDG_STATE_HOME", os.path.join(HOME, ".local", "state"))
+USAGE_DIR = os.path.join(STATE_HOME, "omarchy", "agents", "usage")
+
+MODEL_RE = re.compile(r"Model Selection`?\s+from\s+.*?\s+to\s+(.+?)(?:\.\s+No need|\.\s*$|\n|$)")
+
+
+def slugify_model(raw_name: str) -> str:
+    # Remove parenthetical suffix like "(Medium)", "(High)", "(Thinking)"
+    cleaned = re.sub(r"\s*\([^)]*\)", "", raw_name).strip().lower()
+    cleaned = re.sub(r"[^a-z0-9]+", "-", cleaned).strip("-")
+    return cleaned or "gemini-4-argon"
+
+
+def parse_local_date(iso_str: str) -> str:
+    if not iso_str:
+        return ""
+    try:
+        dt = datetime.datetime.fromisoformat(iso_str.replace("Z", "+00:00"))
+        return dt.astimezone().strftime("%Y-%m-%d")
+    except Exception:
+        return iso_str[:10]
+
+
+def collect() -> dict:
+    now_local = datetime.datetime.now().astimezone()
+    today_str = now_local.strftime("%Y-%m-%d")
+    recent_dates = [
+        (now_local.date() - datetime.timedelta(days=offset)).strftime("%Y-%m-%d")
+        for offset in range(6, -1, -1)
+    ]
+    recent_by_day = {d: 0 for d in recent_dates}
+
+    today_prompts = 0
+    total_prompts = 0
+    today_sessions_set = set()
+    total_sessions_set = set()
+    active_dates_set = set()
+    today_total_tokens = 0
+    today_tokens_by_model = {}
+    model_usage = {}
+
+    pattern = os.path.join(BRAIN_DIR, "*", ".system_generated", "logs", "transcript.jsonl")
+    for path in sorted(glob.glob(pattern)):
+        conv_id = path.split(os.sep)[-4]
+        current_model = "gemini-4-argon"
+        conv_has_activity = False
+
+        try:
+            with open(path, "r", encoding="utf-8", errors="replace") as f:
+                for line in f:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    try:
+                        step = json.loads(line)
+                    except Exception:
+                        continue
+
+                    step_type = step.get("type", "")
+                    created_at = step.get("created_at", "")
+                    day = parse_local_date(created_at)
+
+                    if step_type == "USER_INPUT":
+                        content = step.get("content") or ""
+                        m = MODEL_RE.search(content)
+                        if m:
+                            current_model = slugify_model(m.group(1))
+                        total_prompts += 1
+                        conv_has_activity = True
+                        if day:
+                            active_dates_set.add(day)
+                        if day == today_str:
+                            today_prompts += 1
+                            today_sessions_set.add(conv_id)
+
+                    elif step_type == "PLANNER_RESPONSE":
+                        inp = int(step.get("input_tokens") or 0)
+                        out = int(step.get("output_tokens") or 0)
+                        cache_r = int(step.get("cache_read_tokens") or 0)
+                        cache_w = int(step.get("cache_creation_tokens") or 0)
+                        step_total = inp + out + cache_r + cache_w
+                        if step_total <= 0:
+                            continue
+
+                        conv_has_activity = True
+                        if day:
+                            active_dates_set.add(day)
+                            if day in recent_by_day:
+                                recent_by_day[day] += step_total
+                            if day == today_str:
+                                today_total_tokens += step_total
+                                today_sessions_set.add(conv_id)
+                                today_tokens_by_model[current_model] = (
+                                    today_tokens_by_model.get(current_model, 0) + step_total
+                                )
+
+                        bucket = model_usage.setdefault(
+                            current_model,
+                            {
+                                "inputTokens": 0,
+                                "outputTokens": 0,
+                                "cacheReadInputTokens": 0,
+                                "cacheCreationInputTokens": 0,
+                            },
+                        )
+                        bucket["inputTokens"] += inp
+                        bucket["outputTokens"] += out
+                        bucket["cacheReadInputTokens"] += cache_r
+                        bucket["cacheCreationInputTokens"] += cache_w
+        except Exception:
+            continue
+
+        if conv_has_activity:
+            total_sessions_set.add(conv_id)
+
+    active_dates = sorted(active_dates_set)
+    record = {
+        "schemaVersion": 1,
+        "id": "antigravity",
+        "name": "Antigravity",
+        "updatedAt": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        "ready": True,
+        "hasLocalStats": True,
+        "todayPrompts": today_prompts,
+        "todaySessions": len(today_sessions_set),
+        "todayTotalTokens": today_total_tokens,
+        "todayTokensByModel": today_tokens_by_model,
+        "recentDays": [
+            {"date": d, "messageCount": recent_by_day[d]} for d in recent_dates
+        ],
+        "totalPrompts": total_prompts,
+        "totalSessions": len(total_sessions_set),
+        "activeDays": len(active_dates),
+        "activeDates": active_dates,
+        "modelUsage": model_usage,
+        "limits": [],
+        "tierLabel": "Google AI Pro",
+        "usageStatusText": "",
+        "authHelpText": "",
+    }
+    return record
+
+
+def main():
+    record = collect()
+    payload = json.dumps(record, separators=(",", ":"))
+    if "--write" in sys.argv:
+        os.makedirs(USAGE_DIR, exist_ok=True)
+        fd, tmp_path = tempfile.mkstemp(prefix=".antigravity.", dir=USAGE_DIR)
+        try:
+            with os.fdopen(fd, "w", encoding="utf-8") as f:
+                f.write(payload + "\n")
+            os.replace(tmp_path, os.path.join(USAGE_DIR, "antigravity.json"))
+        finally:
+            if os.path.exists(tmp_path):
+                os.unlink(tmp_path)
+    print(payload)
+
+
+if __name__ == "__main__":
+    main()
