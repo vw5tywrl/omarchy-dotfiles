@@ -1,81 +1,90 @@
 # Omarchy Dotfiles & Customizations
 
-Repository contenente le configurazioni e personalizzazioni per [Omarchy](https://omarchy.org/) (Hyprland su Arch Linux).
-
-## Caratteristiche incluse
-
-### 1. Indicatore Caps Lock ("X") coerente
-Un indicatore visivo minimal a forma di "X" che segnala se il Caps Lock è attivo in tutte le schermate chiave:
-- **Topbar**: widget dedicato sulla barra di Omarchy (`loathe.capslock`).
-- **Lock Screen**: compare a sinistra del box password durante la sospensione/blocco schermo (`loathe.lock`).
-- **Schermata di Login SDDM**: compare all'interno del campo password all'avvio (`system/sddm-theme/Main.qml`).
-
-### 2. Monitor AI Usage & Icona Topbar
-- Widget dedicato sulla topbar per monitorare lo stato e l'utilizzo dei modelli AI (`loathe.agents`).
-- Icona personalizzata "AI" in JetBrainsMono Nerd Font Bold sulla barra.
-- Script ausiliario di aggiornamento e conteggio quote in `.local/bin/omarchy-agent-usage-antigravity`.
-
-### 3. Widget Bluetooth
-- Pannello e widget per la gestione rapida delle connessioni Bluetooth (`loathe.bluetooth`).
-
-### 4. Hyprland & Scorciatoie
-- **Layout tastiera**: Italiano + US con switch rapido tramite `Super + Spazio` (`input.lua`).
-- **Menu principale**: apertura del menu Omarchy rimappata su `Super + D` (`bindings.lua`).
-- **Sensibilità mouse**: ottimizzata per precisione (`input.lua`).
-- **Monitors & scaling**: scala monitor impostata a 1.25x (`monitors.lua`).
-- **Lua LS stubs**: configurazione LSP per Hyprland (`.luarc.json`).
-
-### 5. Configurazioni Terminali
-- Configurazioni coordinate per **Alacritty**, **Ghostty**, **Kitty** e **Foot** con font JetBrainsMono Nerd Font (size 11) e gestione del padding uniforme.
-
-### 6. Sistema e Toolchain
-- **Environment**: Abilitazione Wayland nativo per Firefox (`environment.d/omarchy-firefox-wayland.conf`).
-- **Monitor di sistema**: Configurazione personalizzata di `btop` (ordinamento processi per PID, layout box) in `btop/btop.conf`.
-- **Toolchain di sviluppo**: Toolchain `mise` configurata per i runtime in `mise/config.toml`.
-- **Agent di default**: Preferenza agent in `omarchy/defaults/agent`.
+Clean, modular configuration files and custom plugins for [Omarchy](https://omarchy.org/) (Hyprland running on Arch Linux).
 
 ---
 
-## Struttura della repository
+## Highlights & Features
+
+### 1. Unified Caps Lock Indicator ("X")
+A consistent, minimalist visual indicator shaped as an `X` that notifies when Caps Lock is active across all system levels:
+- **Topbar**: Dedicated widget in the Omarchy bar (`loathe.capslock`).
+- **Lock Screen**: Displayed on the left side of the password field during suspend/lock (`loathe.lock`).
+- **SDDM Login Screen**: Rendered inside the login password box at startup (`system/sddm-theme/Main.qml`).
+
+### 2. AI Usage Monitor & Topbar Widget
+- Bar widget to monitor usage and rate limits across AI models (`loathe.agents`).
+- Custom "AI" glyph using bold JetBrainsMono Nerd Font.
+- Quota computation and refresh helper located at `.local/bin/omarchy-agent-usage-antigravity`.
+
+### 3. Bluetooth Widget
+- Panel and status bar widget for quickly managing Bluetooth device pairing and connection states (`loathe.bluetooth`).
+
+### 4. Hyprland & Keybindings
+- **Keyboard Layout**: Italian + US layouts with seamless switching via `Super + Space` (`input.lua`).
+- **Application Launcher**: Omarchy menu rebound to `Super + D` (`bindings.lua`).
+- **Input & Display**: Adjusted mouse sensitivity and monitor scaling set to 1.25x (`input.lua`, `monitors.lua`).
+- **Language Server**: Lua LS stubs and diagnostics configured for Hyprland (`.luarc.json`).
+
+### 5. Unified Terminal Configurations
+- Polished, harmonized configs for **Alacritty**, **Ghostty**, **Kitty**, and **Foot**:
+  - Consistent typography using **JetBrainsMono Nerd Font** (size 11).
+  - Uniform internal padding and cursor styling.
+
+### 6. System Environment & Toolchains
+- **Environment**: Native Wayland enabled for Firefox (`environment.d/omarchy-firefox-wayland.conf`).
+- **Process Monitor**: Custom `btop` configuration with PID process sorting and preferred panel layout (`btop/btop.conf`).
+- **Toolchain Manager**: `mise` configuration for developer runtime versions (`mise/config.toml`).
+- **Default Agent**: Configured agent preference in `omarchy/defaults/agent`.
+
+---
+
+## Repository Structure
 
 ```text
 dotfiles/
 ├── .config/
-│   ├── alacritty/          # Configurazione Alacritty
-│   ├── btop/               # Configurazione btop (process monitor)
-│   ├── environment.d/      # Variabili d'ambiente (Firefox Wayland)
-│   ├── foot/               # Configurazione Foot
-│   ├── ghostty/            # Configurazione Ghostty
+│   ├── alacritty/          # Alacritty terminal config
+│   ├── btop/               # btop process monitor config
+│   ├── environment.d/      # Environment variables (native Wayland Firefox)
+│   ├── foot/               # Foot terminal config
+│   ├── ghostty/            # Ghostty terminal config
 │   ├── hypr/               # Hyprland (bindings, input, monitors, autostart, .luarc.json)
-│   ├── kitty/              # Configurazione Kitty
-│   ├── mise/               # Configurazione mise (runtimes / tools)
-│   └── omarchy/            # Layout barra, shell.json/toml e plugin custom
-│       ├── defaults/       # Default agent
+│   ├── kitty/              # Kitty terminal config
+│   ├── mise/               # mise runtime and toolchain config
+│   └── omarchy/            # Omarchy bar layout (shell.json/toml) & custom plugins
+│       ├── defaults/       # Default agent preference
 │       └── plugins/
-│           ├── loathe.agents/
-│           ├── loathe.bluetooth/
-│           ├── loathe.capslock/
-│           └── loathe.lock/
+│           ├── loathe.agents/     # AI monitor widget & provider icons
+│           ├── loathe.bluetooth/  # Bluetooth management widget
+│           ├── loathe.capslock/   # Topbar Caps Lock indicator
+│           └── loathe.lock/       # Lock screen with Caps Lock indicator
 ├── .local/
 │   └── bin/
-│       └── omarchy-agent-usage-antigravity
+│       └── omarchy-agent-usage-antigravity  # Quota sync script
 ├── system/
 │   └── sddm-theme/
-│       └── Main.qml        # Tema SDDM personalizzato con Caps Lock indicator
-├── install.sh              # Script di installazione automatica
+│       └── Main.qml        # Custom SDDM theme with Caps Lock indicator
+├── install.sh              # Automated deployment script
+├── .gitignore
 └── README.md
 ```
 
 ---
 
-## Installazione / Ripristino
+## Installation & Deployment
 
-Su una nuova installazione di Omarchy:
+To apply these configurations on a fresh Omarchy system:
 
 ```bash
 git clone https://github.com/vw5tywrl/omarchy-dotfiles.git ~/dotfiles
 cd ~/dotfiles
+chmod +x install.sh
 ./install.sh
 ```
 
-Lo script installerà i file in `~/.config`, renderà eseguibili gli script in `~/.local/bin`, chiederà se applicare la personalizzazione SDDM e riavvierà la shell di Omarchy.
+### What `install.sh` does:
+1. Copies all user configuration files (including dotfiles) to `~/.config/`.
+2. Installs helper scripts into `~/.local/bin/` with proper execute permissions.
+3. Prompts whether to deploy the customized SDDM login screen theme (`Main.qml`).
+4. Gracefully reloads the Omarchy shell to activate all widgets and bar layouts immediately.
