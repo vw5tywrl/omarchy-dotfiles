@@ -22,9 +22,17 @@ Un indicatore visivo minimal a forma di "X" che segnala se il Caps Lock è attiv
 - **Layout tastiera**: Italiano + US con switch rapido tramite `Super + Spazio` (`input.lua`).
 - **Menu principale**: apertura del menu Omarchy rimappata su `Super + D` (`bindings.lua`).
 - **Sensibilità mouse**: ottimizzata per precisione (`input.lua`).
+- **Monitors & scaling**: scala monitor impostata a 1.25x (`monitors.lua`).
+- **Lua LS stubs**: configurazione LSP per Hyprland (`.luarc.json`).
 
 ### 5. Configurazioni Terminali
 - Configurazioni coordinate per **Alacritty**, **Ghostty**, **Kitty** e **Foot** con font JetBrainsMono Nerd Font (size 11) e gestione del padding uniforme.
+
+### 6. Sistema e Toolchain
+- **Environment**: Abilitazione Wayland nativo per Firefox (`environment.d/omarchy-firefox-wayland.conf`).
+- **Monitor di sistema**: Configurazione personalizzata di `btop` (ordinamento processi per PID, layout box) in `btop/btop.conf`.
+- **Toolchain di sviluppo**: Toolchain `mise` configurata per i runtime in `mise/config.toml`.
+- **Agent di default**: Preferenza agent in `omarchy/defaults/agent`.
 
 ---
 
@@ -33,17 +41,21 @@ Un indicatore visivo minimal a forma di "X" che segnala se il Caps Lock è attiv
 ```text
 dotfiles/
 ├── .config/
-│   ├── hypr/               # Hyprland (bindings, input, monitors, autostart)
-│   ├── omarchy/            # Layout barra, shell.json/toml e plugin custom
-│   │   └── plugins/
-│   │       ├── loathe.agents/
-│   │       ├── loathe.bluetooth/
-│   │       ├── loathe.capslock/
-│   │       └── loathe.lock/
 │   ├── alacritty/          # Configurazione Alacritty
-│   ├── kitty/              # Configurazione Kitty
+│   ├── btop/               # Configurazione btop (process monitor)
+│   ├── environment.d/      # Variabili d'ambiente (Firefox Wayland)
 │   ├── foot/               # Configurazione Foot
-│   └── ghostty/            # Configurazione Ghostty
+│   ├── ghostty/            # Configurazione Ghostty
+│   ├── hypr/               # Hyprland (bindings, input, monitors, autostart, .luarc.json)
+│   ├── kitty/              # Configurazione Kitty
+│   ├── mise/               # Configurazione mise (runtimes / tools)
+│   └── omarchy/            # Layout barra, shell.json/toml e plugin custom
+│       ├── defaults/       # Default agent
+│       └── plugins/
+│           ├── loathe.agents/
+│           ├── loathe.bluetooth/
+│           ├── loathe.capslock/
+│           └── loathe.lock/
 ├── .local/
 │   └── bin/
 │       └── omarchy-agent-usage-antigravity
@@ -61,7 +73,7 @@ dotfiles/
 Su una nuova installazione di Omarchy:
 
 ```bash
-git clone <URL_DELLA_TUA_REPO> ~/dotfiles
+git clone https://github.com/vw5tywrl/omarchy-dotfiles.git ~/dotfiles
 cd ~/dotfiles
 ./install.sh
 ```

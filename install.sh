@@ -6,15 +6,15 @@ DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 echo "=== Omarchy Dotfiles Installer ==="
 echo "Installing dotfiles from: $DOTFILES_DIR"
 
-# 1. Config directory
+# 1. Config directory (including hidden files)
 echo "-> Deploying user configs to ~/.config..."
 mkdir -p ~/.config
-cp -r "$DOTFILES_DIR/.config/"* ~/.config/
+cp -a "$DOTFILES_DIR/.config/." ~/.config/
 
 # 2. Local bin scripts
 echo "-> Deploying helper scripts to ~/.local/bin..."
 mkdir -p ~/.local/bin
-cp -r "$DOTFILES_DIR/.local/bin/"* ~/.local/bin/
+cp -a "$DOTFILES_DIR/.local/bin/." ~/.local/bin/
 chmod +x ~/.local/bin/*
 
 # 3. SDDM Theme (Requires sudo)
