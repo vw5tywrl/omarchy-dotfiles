@@ -37,6 +37,12 @@ A consistent, minimalist visual indicator shaped as an `X` that notifies when Ca
 - **Toolchain Manager**: `mise` configuration for developer runtime versions (`mise/config.toml`).
 - **Default Agent**: Configured agent preference in `omarchy/defaults/agent`.
 
+### 7. Custom Theme: Apollo After Dark (True-Black Edition)
+- Based on the **Apollo After Dark** community theme from the Omarchy themes showcase ([`leaflessbranch/omarchy-apollo-after-dark-theme`](https://github.com/leaflessbranch/omarchy-apollo-after-dark-theme)).
+- Customized in `omarchy/themes/apollo-after-dark/` (`colors.toml` and `shell.lock.toml`) with:
+  - **Vantablack-style true-black backgrounds** (`#000000` primary, `#090909` / `#070707` dark surfaces).
+  - **High-contrast true-white typography** (`#FFFFFF` foreground and lifted neutral grays `#ECECEC` / `#9A9A9A` / `#858585`) tuned for sharp readability on TN panels while preserving Apollo's warm orange/gold accents.
+
 ---
 
 ## Repository Structure
@@ -52,13 +58,15 @@ dotfiles/
 │   ├── hypr/               # Hyprland (bindings, input, monitors, autostart, .luarc.json)
 │   ├── kitty/              # Kitty terminal config
 │   ├── mise/               # mise runtime and toolchain config
-│   └── omarchy/            # Omarchy bar layout (shell.json/toml) & custom plugins
+│   └── omarchy/            # Omarchy bar layout (shell.json/toml), themes & custom plugins
 │       ├── defaults/       # Default agent preference
-│       └── plugins/
-│           ├── loathe.agents/     # AI monitor widget & provider icons
-│           ├── loathe.bluetooth/  # Bluetooth management widget
-│           ├── loathe.capslock/   # Topbar Caps Lock indicator
-│           └── loathe.lock/       # Lock screen with Caps Lock indicator
+│       ├── plugins/
+│       │   ├── loathe.agents/     # AI monitor widget & provider icons
+│       │   ├── loathe.bluetooth/  # Bluetooth management widget
+│       │   ├── loathe.capslock/   # Topbar Caps Lock indicator
+│       │   └── loathe.lock/       # Lock screen with Caps Lock indicator
+│       └── themes/
+│           └── apollo-after-dark/ # Customized Apollo After Dark theme (true-black & white text)
 ├── .local/
 │   └── bin/
 │       └── omarchy-agent-usage-antigravity  # Quota sync script
