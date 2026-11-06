@@ -32,8 +32,9 @@ Item {
   // Space to keep clear on each side of the field for the side indicators/buttons
   // so the centered dots/text never run under them.
   readonly property real rightSideWidth: (fingerprintConfigured ? Math.round(fingerprintIcon.implicitWidth + 12) : 0)
+    + (capsLockOn ? Math.round(capsDot.width + 16) : 0)
     + (showEyeButton ? Math.round(eyeButton.width + 12) : 0)
-  readonly property real leftSideWidth: capsLockOn ? Math.round(capsDot.width + 16) : 0
+  readonly property real leftSideWidth: 0
   readonly property real sideReserve: Math.max(rightSideWidth, leftSideWidth)
   // Shrink the dots/text to fit once the password outgrows the field, so every
   // keystroke stays visible — otherwise long passwords clip with no feedback.
@@ -176,14 +177,14 @@ Item {
       radius: Style.cornerRadius
       clip: true
 
-      // Cool white X Caps Lock indicator on the left edge of the password box
+      // Cool white X Caps Lock indicator on the right edge of the password box
       Item {
         id: capsDot
         objectName: "capsLockIndicator"
         width: 14
         height: 14
-        anchors.left: parent.left
-        anchors.leftMargin: inputField.borderLeft + 18
+        anchors.right: fingerprintIcon.visible ? fingerprintIcon.left : parent.right
+        anchors.rightMargin: fingerprintIcon.visible ? 12 : (inputField.borderRight + 18)
         anchors.verticalCenter: parent.verticalCenter
         visible: root.capsLockOn
 
@@ -298,8 +299,8 @@ Item {
         objectName: "viewPasswordButton"
         width: Math.max(eyeIcon.implicitWidth + 8, 28)
         height: parent.height - inputField.borderTop - inputField.borderBottom
-        anchors.right: fingerprintIcon.visible ? fingerprintIcon.left : parent.right
-        anchors.rightMargin: fingerprintIcon.visible ? 10 : (inputField.borderRight + 14)
+        anchors.right: capsDot.visible ? capsDot.left : (fingerprintIcon.visible ? fingerprintIcon.left : parent.right)
+        anchors.rightMargin: capsDot.visible ? 10 : (fingerprintIcon.visible ? 10 : (inputField.borderRight + 14))
         anchors.verticalCenter: parent.verticalCenter
         visible: root.showEyeButton
 

@@ -27,3 +27,17 @@ o.bind("SUPER + D", "Omarchy menu", "omarchy-menu toggle")
 -- o.bind("SUPER + SHIFT + S", nil, "omarchy-capture-screenshot")
 -- o.bind("SUPER + H", nil, "voxtype record toggle")
 -- o.bind("SUPER + PERIOD", nil, "omarchy-shell shell toggle omarchy.emojis")
+
+-- Disable default web app bindings (they need a Chromium-based browser; only Firefox is installed).
+hl.unbind("SUPER + SHIFT + A")          -- ChatGPT
+hl.unbind("SUPER + SHIFT + ALT + A")    -- Grok
+hl.unbind("SUPER + SHIFT + C")          -- Calendar (HEY)
+hl.unbind("SUPER + SHIFT + E")          -- Email (HEY)
+hl.unbind("SUPER + SHIFT + ALT + E")    -- New email (HEY)
+hl.unbind("SUPER + SHIFT + Y")          -- YouTube
+hl.unbind("SUPER + SHIFT + ALT + G")    -- WhatsApp
+hl.unbind("SUPER + SHIFT + CTRL + G")   -- Google Messages
+hl.unbind("SUPER + SHIFT + P")          -- Google Photos
+hl.unbind("SUPER + SHIFT + S")          -- Google Maps
+hl.unbind("SUPER + SHIFT + X")          -- X
+hl.unbind("SUPER + SHIFT + ALT + X")    -- X Post
